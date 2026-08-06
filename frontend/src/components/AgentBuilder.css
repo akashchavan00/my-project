@@ -499,6 +499,14 @@
   box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
 }
 
+[data-theme="purple"] .btn-add-agent {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-tertiary) 100%);
+}
+
+[data-theme="purple"] .btn-add-agent:hover {
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.35);
+}
+
 .btn-cancel-edit {
   padding: 0.75rem 1.25rem;
   background: transparent;
@@ -545,6 +553,14 @@
 
 [data-theme="dark"] .btn-done:hover:not(:disabled) {
   box-shadow: 0 6px 20px rgba(255, 140, 66, 0.4);
+}
+
+[data-theme="purple"] .btn-done {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-tertiary) 100%);
+}
+
+[data-theme="purple"] .btn-done:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4);
 }
 
 /* ==================== SMALLER FONTS FOR PROFESSIONAL LOOK ==================== */
@@ -622,6 +638,14 @@
   box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
 }
 
+[data-theme="purple"] .btn-save-agent {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-tertiary) 100%);
+}
+
+[data-theme="purple"] .btn-save-agent:hover {
+  box-shadow: 0 4px 12px rgba(168, 85, 247, 0.35);
+}
+
 /* ==================== TOOLS SELECTION ==================== */
 .tools-selection {
   display: flex;
@@ -689,6 +713,10 @@
   background: rgba(255, 138, 76, 0.15);
 }
 
+[data-theme="purple"] .selected-tools-info {
+  background: rgba(124, 58, 237, 0.12);
+}
+
 /* ==================== PIPELINE TOOLS ==================== */
 .pipeline-tools {
   font-size: 0.7rem;
@@ -702,4 +730,8 @@
 
 [data-theme="dark"] .pipeline-tools {
   background: rgba(255, 138, 76, 0.1);
+}
+
+[data-theme="purple"] .pipeline-tools {
+  background: rgba(124, 58, 237, 0.1);
 }

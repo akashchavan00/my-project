@@ -3,16 +3,14 @@ import chatService from '../services/chatService';
 import agentService from '../services/agentService';
 import Sidebar from './Sidebar';
 import AgentBuilder from './AgentBuilder';
+import ThemeSwitcher from './ThemeSwitcher';
 import './ChatInterface.css';
 
-function ChatInterface() {
+function ChatInterface({ theme, onThemeChange, onGoHome }) {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
-  const [theme, setTheme] = useState(() => {
-    return localStorage.getItem('chat-theme') || 'light';
-  });
   const [sessions, setSessions] = useState([]);
   const [currentSessionId, setCurrentSessionId] = useState(chatService.getCurrentSessionId());
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -34,11 +32,6 @@ function ChatInterface() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
-
-  useEffect(() => {
-    localStorage.setItem('chat-theme', theme);
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
 
   const checkHealth = async () => {
     try {
@@ -93,10 +86,6 @@ function ChatInterface() {
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
   };
 
   const handleSelectSession = async (sessionId) => {
@@ -320,14 +309,13 @@ function ChatInterface() {
               <span className="status-dot"></span>
               {isConnected ? 'Connected' : 'Disconnected'}
             </div>
-            <button 
-              onClick={toggleTheme} 
-              className="theme-toggle-btn" 
-              title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
-              aria-label="Toggle theme"
-            >
-              {theme === 'light' ? '🌙' : '☀️'}
-            </button>
+            {onGoHome && (
+              <button onClick={onGoHome} className="home-btn" title="Back to home">
+                <span className="btn-icon">🏠</span>
+                <span className="btn-text">Home</span>
+              </button>
+            )}
+            <ThemeSwitcher theme={theme} onChange={onThemeChange} />
             <button onClick={handleClearChat} className="clear-btn" title="Clear chat history">
               <span className="btn-icon">🗑️</span>
               <span className="btn-text">Clear</span>

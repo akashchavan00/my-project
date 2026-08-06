@@ -24,6 +24,20 @@
   --dark-border: #3d3d3d;
   --dark-shadow: rgba(0, 0, 0, 0.3);
   --dark-accent: #ff8c42;
+
+  /* Purple Theme - Indigo & Violet (professional SaaS look) */
+  --purple-bg-primary: #F8FAFC;
+  --purple-bg-secondary: #FFFFFF;
+  --purple-bg-header: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+  --purple-bg-user: linear-gradient(135deg, #4F46E5 0%, #A855F7 100%);
+  --purple-bg-bot: #FFFFFF;
+  --purple-text-primary: #111827;
+  --purple-text-secondary: #6B7280;
+  --purple-border: #E5E7EB;
+  --purple-shadow: rgba(79, 70, 229, 0.14);
+  --purple-accent: #4F46E5;
+  --purple-accent-secondary: #7C3AED;
+  --purple-accent-tertiary: #A855F7;
 }
 
 /* ==================== THEME SWITCHING ==================== */
@@ -52,6 +66,21 @@
   --border: var(--dark-border);
   --shadow: var(--dark-shadow);
   --accent: var(--dark-accent);
+}
+
+[data-theme="purple"] {
+  --bg-primary: var(--purple-bg-primary);
+  --bg-secondary: var(--purple-bg-secondary);
+  --bg-header: var(--purple-bg-header);
+  --bg-user: var(--purple-bg-user);
+  --bg-bot: var(--purple-bg-bot);
+  --text-primary: var(--purple-text-primary);
+  --text-secondary: var(--purple-text-secondary);
+  --border: var(--purple-border);
+  --shadow: var(--purple-shadow);
+  --accent: var(--purple-accent);
+  --accent-secondary: var(--purple-accent-secondary);
+  --accent-tertiary: var(--purple-accent-tertiary);
 }
 
 /* ==================== MAIN CONTAINER ==================== */
@@ -156,6 +185,7 @@
 }
 
 .theme-toggle-btn,
+.home-btn,
 .clear-btn {
   display: flex;
   align-items: center;
@@ -177,6 +207,7 @@
 }
 
 .theme-toggle-btn:hover,
+.home-btn:hover,
 .clear-btn:hover {
   transform: translateY(-1px);
   background: rgba(255, 255, 255, 0.2);
@@ -360,6 +391,10 @@
   color: #1a1a1a;
 }
 
+[data-theme="purple"] .bot-avatar {
+  color: white;
+}
+
 .message-content {
   max-width: 70%;
   display: flex;
@@ -522,6 +557,25 @@
 
 [data-theme="dark"] .input-wrapper:focus-within {
   box-shadow: 0 0 0 2px rgba(255, 140, 66, 0.1);
+}
+
+[data-theme="purple"] .input-wrapper:focus-within {
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.15);
+}
+
+/* Purple theme header uses a gradient background - text/icons stay white,
+   matching the reference "Synthwave.ai"-style hero header. */
+[data-theme="purple"] .chat-header {
+  border-bottom: none;
+}
+
+[data-theme="purple"] .send-btn,
+[data-theme="purple"] .agent-btn {
+  background: linear-gradient(135deg, var(--purple-accent) 0%, var(--purple-accent-tertiary) 100%);
+}
+
+[data-theme="purple"] .message.agent-result .message-text {
+  border-color: var(--purple-accent-tertiary);
 }
 
 .message-input {
@@ -727,6 +781,10 @@
 
 [data-theme="dark"] .download-btn {
   background: var(--accent);
+}
+
+[data-theme="purple"] .download-btn {
+  background: linear-gradient(135deg, var(--purple-accent) 0%, var(--purple-accent-tertiary) 100%);
 }
 
 .download-btn:hover {

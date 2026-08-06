@@ -17,6 +17,10 @@ html[data-theme="dark"] {
   background-color: #1a1a1a;
 }
 
+html[data-theme="purple"] {
+  background-color: #F8FAFC;
+}
+
 body {
   margin: 0;
   display: flex;

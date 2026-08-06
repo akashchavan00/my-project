@@ -343,6 +343,10 @@
   background: var(--accent);
 }
 
+[data-theme="purple"] .create-agent-btn {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-tertiary) 100%);
+}
+
 .create-agent-btn:hover {
   transform: translateY(-1px);
   box-shadow: 0 3px 10px var(--shadow);
@@ -491,4 +495,8 @@
 
 [data-theme="dark"] .tool-usage {
   background: rgba(255, 138, 76, 0.1);
+}
+
+[data-theme="purple"] .tool-usage {
+  background: rgba(124, 58, 237, 0.1);
 }
