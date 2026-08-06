@@ -31,6 +31,7 @@ class AgentExecutionResult(BaseModel):
     output_text: str
     execution_time: float
     order: int
+    excel_file: Optional[Dict[str, str]] = None
 
 
 class AgentExecutionResponse(BaseModel):
@@ -39,6 +40,7 @@ class AgentExecutionResponse(BaseModel):
     final_output: str
     total_execution_time: float
     timestamp: datetime = Field(default_factory=datetime.utcnow)
+    excel_file: Optional[Dict[str, str]] = None
 
 
 class SavedAgent(BaseModel):

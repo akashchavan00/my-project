@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import './AgentBuilder.css';
 
-function AgentBuilder({ onClose, onPipelineReady, savedAgents, editingAgent }) {
+function AgentBuilder({ onClose, onPipelineReady, savedAgents, editingAgent, availableTools }) {
   const [agents, setAgents] = useState([]);
   const [currentAgent, setCurrentAgent] = useState({
     agent_id: '',
@@ -14,11 +14,13 @@ function AgentBuilder({ onClose, onPipelineReady, savedAgents, editingAgent }) {
   });
   const [showTemplates, setShowTemplates] = useState(false);
   const [editingIndex, setEditingIndex] = useState(null);
+  const [selectedTools, setSelectedTools] = useState([]);
 
   // Load editing agent if provided
   useEffect(() => {
     if (editingAgent) {
       setAgents([editingAgent]);
+      setSelectedTools(editingAgent.tools || []);
     }
   }, [editingAgent]);
 
@@ -35,7 +37,8 @@ function AgentBuilder({ onClose, onPipelineReady, savedAgents, editingAgent }) {
     const newAgent = {
       ...currentAgent,
       agent_id: currentAgent.agent_id || generateAgentId(),
-      order: editingIndex !== null ? currentAgent.order : agents.length
+      order: editingIndex !== null ? currentAgent.order : agents.length,
+      tools: selectedTools
     };
 
     if (editingIndex !== null) {
@@ -57,10 +60,12 @@ function AgentBuilder({ onClose, onPipelineReady, savedAgents, editingAgent }) {
       tools: [],
       order: 0
     });
+    setSelectedTools([]);
   };
 
   const handleEditAgent = (index) => {
     setCurrentAgent(agents[index]);
+    setSelectedTools(agents[index].tools || []);
     setEditingIndex(index);
   };
 
@@ -95,7 +100,16 @@ function AgentBuilder({ onClose, onPipelineReady, savedAgents, editingAgent }) {
       order: agents.length
     };
     setCurrentAgent(newAgent);
+    setSelectedTools(template.tools || []);
     setShowTemplates(false);
+  };
+
+  const handleToolToggle = (toolId) => {
+    setSelectedTools(prev => 
+      prev.includes(toolId) 
+        ? prev.filter(t => t !== toolId)
+        : [...prev, toolId]
+    );
   };
 
   const handleDone = () => {
@@ -163,6 +177,35 @@ function AgentBuilder({ onClose, onPipelineReady, savedAgents, editingAgent }) {
               </div>
             </div>
 
+            <div className="form-group">
+              <label>Tools (Optional)</label>
+              <div className="tools-selection">
+                {availableTools && availableTools.length > 0 ? (
+                  availableTools.map(tool => (
+                    <div key={tool.id} className="tool-checkbox">
+                      <input
+                        type="checkbox"
+                        id={`tool-${tool.id}`}
+                        checked={selectedTools.includes(tool.id)}
+                        onChange={() => handleToolToggle(tool.id)}
+                      />
+                      <label htmlFor={`tool-${tool.id}`}>
+                        <span className="tool-checkbox-name">{tool.name}</span>
+                        <span className="tool-checkbox-desc">{tool.description}</span>
+                      </label>
+                    </div>
+                  ))
+                ) : (
+                  <span className="help-text">No tools available</span>
+                )}
+              </div>
+              {selectedTools.length > 0 && (
+                <div className="selected-tools-info">
+                  ✓ {selectedTools.length} tool{selectedTools.length > 1 ? 's' : ''} selected
+                </div>
+              )}
+            </div>
+
             <div className="form-actions">
               <button className="btn-secondary" onClick={() => setShowTemplates(!showTemplates)}>
                 📋 Templates
@@ -182,6 +225,7 @@ function AgentBuilder({ onClose, onPipelineReady, savedAgents, editingAgent }) {
                     tools: [],
                     order: 0
                   });
+                  setSelectedTools([]);
                 }}>
                   Cancel
                 </button>
@@ -218,6 +262,11 @@ function AgentBuilder({ onClose, onPipelineReady, savedAgents, editingAgent }) {
                       <div className="pipeline-name">{agent.name}</div>
                       <div className="pipeline-desc">{agent.description || 'No description'}</div>
                       <div className="pipeline-prompt">{agent.prompt.substring(0, 60)}...</div>
+                      {agent.tools && agent.tools.length > 0 && (
+                        <div className="pipeline-tools">
+                          🔧 {agent.tools.join(', ')}
+                        </div>
+                      )}
                     </div>
                     <div className="pipeline-actions">
                       <button 

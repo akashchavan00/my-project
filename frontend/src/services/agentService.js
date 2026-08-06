@@ -46,6 +46,16 @@ class AgentService {
       throw error;
     }
   }
+
+  async getAvailableTools() {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/api/agents/tools`);
+      return response.data.tools;
+    } catch (error) {
+      console.error('Error fetching available tools:', error);
+      return [];
+    }
+  }
 }
 
 export default new AgentService();

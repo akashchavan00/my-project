@@ -20,6 +20,7 @@ function ChatInterface() {
   const [savedAgents, setSavedAgents] = useState([]);
   const [activePipeline, setActivePipeline] = useState(null);
   const [editingAgent, setEditingAgent] = useState(null);
+  const [availableTools, setAvailableTools] = useState([]);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
@@ -27,6 +28,7 @@ function ChatInterface() {
     loadSessions();
     loadChatHistory(currentSessionId);
     loadSavedAgents();
+    loadAvailableTools();
   }, []);
 
   useEffect(() => {
@@ -77,6 +79,15 @@ function ChatInterface() {
       setSavedAgents(agents);
     } catch (error) {
       console.error('Failed to load saved agents:', error);
+    }
+  };
+
+  const loadAvailableTools = async () => {
+    try {
+      const tools = await agentService.getAvailableTools();
+      setAvailableTools(tools);
+    } catch (error) {
+      console.error('Failed to load available tools:', error);
     }
   };
 
@@ -226,7 +237,8 @@ function ChatInterface() {
         timestamp: response.timestamp,
         isAgentResult: true,
         executionTime: response.total_execution_time,
-        agentCount: response.results.length
+        agentCount: response.results.length,
+        excelFile: response.excel_file
       };
       setMessages(prev => [...prev, agentResultMessage]);
       
@@ -277,6 +289,7 @@ function ChatInterface() {
         onCreateAgent={handleCreateAgent}
         onEditAgent={handleEditAgent}
         onDeleteAgent={handleDeleteAgent}
+        tools={availableTools}
         isOpen={isSidebarOpen}
         onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
       />
@@ -290,6 +303,7 @@ function ChatInterface() {
           onPipelineReady={handleAgentPipelineReady}
           savedAgents={savedAgents}
           editingAgent={editingAgent}
+          availableTools={availableTools}
         />
       )}
 
@@ -348,6 +362,17 @@ function ChatInterface() {
                 </div>
                 <div className="message-content">
                   <div className="message-text">{msg.content}</div>
+                  {msg.excelFile && (
+                    <div className="excel-download">
+                      <a 
+                        href={`http://localhost:8000/api/agents/download/${msg.excelFile.file_name}`}
+                        download={msg.excelFile.file_name}
+                        className="download-btn"
+                      >
+                        📥 Download Excel File: {msg.excelFile.file_name}
+                      </a>
+                    </div>
+                  )}
                   {msg.isAgentResult && (
                     <div className="message-meta">
                       🤖 {msg.agentCount} agent{msg.agentCount > 1 ? 's' : ''} • 

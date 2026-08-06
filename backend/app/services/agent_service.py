@@ -2,18 +2,22 @@ from typing import List, Dict, Any
 from datetime import datetime
 import time
 import os
+import json
 from langchain_groq import ChatGroq
 from langchain_core.messages import HumanMessage, SystemMessage
 from langgraph.graph import StateGraph, END
 from typing_extensions import TypedDict
 from app.models.agent import AgentConfig, AgentExecutionResult
 from .database import db_service
+from app.tools.excel_generator import generate_excel_from_json
+from app.tools.json_utils import extract_json_from_text
 
 
 class AgentState(TypedDict):
     current_input: str
     results: List[Dict[str, Any]]
     agent_index: int
+    excel_file: Dict[str, str] | None  # Store generated Excel file info
 
 
 class AgentExecutionService:
@@ -36,6 +40,9 @@ class AgentExecutionService:
                     # Get input text (either original or from previous agent)
                     input_text = state["current_input"]
                     
+                    # Check if this agent uses the Excel generation tool
+                    has_excel_tool = "excel_generation" in agent_config.tools
+                    
                     # Create LLM instance for this agent
                     llm = ChatGroq(
                         temperature=agent_config.temperature,
@@ -43,9 +50,19 @@ class AgentExecutionService:
                         groq_api_key=self.groq_api_key
                     )
                     
+                    # Prepare system prompt
+                    system_prompt = agent_config.prompt
+                    if has_excel_tool:
+                        system_prompt += (
+                            "\n\nIMPORTANT: You must respond with ONLY valid JSON that can be converted to Excel. "
+                            "Do not include any explanatory text, markdown formatting, or code fences before or "
+                            "after the JSON. Your entire response must be a single valid JSON object or array, "
+                            "and nothing else."
+                        )
+                    
                     # Prepare messages
                     messages = [
-                        SystemMessage(content=agent_config.prompt),
+                        SystemMessage(content=system_prompt),
                         HumanMessage(content=input_text)
                     ]
                     
@@ -54,6 +71,34 @@ class AgentExecutionService:
                     execution_time = time.time() - start_time
                     
                     output_text = response.content
+                    excel_file = None
+                    
+                    # If agent uses Excel tool, process the output
+                    if has_excel_tool:
+                        try:
+                            # Robustly extract the first complete JSON value
+                            # (object or array) from the response, tolerating
+                            # code fences and any trailing/leading text.
+                            json_data, json_str = extract_json_from_text(output_text)
+
+                            # Generate Excel file
+                            excel_file = generate_excel_from_json(
+                                json_data,
+                                output_dir="downloads",
+                                sheet_name="Data"
+                            )
+
+                            # Update output to indicate Excel was generated
+                            preview = json_str[:500] + ("..." if len(json_str) > 500 else "")
+                            output_text = (
+                                f"✅ Excel file generated successfully!\n\n"
+                                f"File: {excel_file['file_name']}\n\n"
+                                f"Preview of data:\n{preview}"
+                            )
+                        except ValueError as e:
+                            output_text = f"⚠️ Could not extract valid JSON from agent response: {str(e)}\n\nAgent response:\n{output_text}"
+                        except Exception as e:
+                            output_text = f"⚠️ Error generating Excel: {str(e)}\n\nAgent response:\n{output_text}"
                     
                     # Store result
                     result = {
@@ -62,7 +107,8 @@ class AgentExecutionService:
                         "input_text": input_text,
                         "output_text": output_text,
                         "execution_time": execution_time,
-                        "order": agent_config.order
+                        "order": agent_config.order,
+                        "excel_file": excel_file
                     }
                     
                     # Update state
@@ -71,7 +117,8 @@ class AgentExecutionService:
                     return {
                         "current_input": output_text,  # Next agent gets this output
                         "results": new_results,
-                        "agent_index": state["agent_index"] + 1
+                        "agent_index": state["agent_index"] + 1,
+                        "excel_file": excel_file or state.get("excel_file")
                     }
                 
                 return agent_node
@@ -110,7 +157,8 @@ class AgentExecutionService:
         initial_state = {
             "current_input": user_input,
             "results": [],
-            "agent_index": 0
+            "agent_index": 0,
+            "excel_file": None
         }
         
         final_state = workflow.invoke(initial_state)
@@ -119,6 +167,7 @@ class AgentExecutionService:
         
         # Get final output (from last agent)
         final_output = final_state["results"][-1]["output_text"] if final_state["results"] else user_input
+        excel_file = final_state.get("excel_file")
         
         # Convert results to AgentExecutionResult objects
         results = [AgentExecutionResult(**result) for result in final_state["results"]]
@@ -139,7 +188,8 @@ class AgentExecutionService:
             "results": results,
             "final_output": final_output,
             "total_execution_time": total_execution_time,
-            "timestamp": datetime.utcnow()
+            "timestamp": datetime.utcnow(),
+            "excel_file": excel_file
         }
     
     async def _save_execution_history(

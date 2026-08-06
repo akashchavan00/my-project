@@ -702,3 +702,39 @@
     padding: 0.625rem;
   }
 }
+
+/* ==================== EXCEL DOWNLOAD ==================== */
+.excel-download {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.download-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 1.125rem;
+  background: var(--accent-secondary);
+  color: white;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px var(--shadow);
+}
+
+[data-theme="dark"] .download-btn {
+  background: var(--accent);
+}
+
+.download-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--shadow);
+  opacity: 0.9;
+}
+
+.download-btn:active {
+  transform: translateY(0);
+}

@@ -11,11 +11,13 @@ function Sidebar({
   onCreateAgent,
   onEditAgent,
   onDeleteAgent,
+  tools,
   isOpen,
   onToggle 
 }) {
   const [chatsExpanded, setChatsExpanded] = useState(true);
   const [agentsExpanded, setAgentsExpanded] = useState(false);
+  const [toolsExpanded, setToolsExpanded] = useState(false);
 
   const formatDate = (dateString) => {
     if (!dateString) return '';
@@ -196,6 +198,43 @@ function Sidebar({
                         >
                           🗑️
                         </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Tools Section */}
+          <div className="sidebar-section">
+            <button 
+              className={`section-toggle ${toolsExpanded ? 'expanded' : ''}`}
+              onClick={() => setToolsExpanded(!toolsExpanded)}
+            >
+              <span className="toggle-icon">{toolsExpanded ? '▼' : '▶'}</span>
+              <span className="section-title">Available Tools</span>
+              <span className="section-count">{tools?.length || 0}</span>
+            </button>
+            
+            {toolsExpanded && (
+              <div className="section-content">
+                {!tools || tools.length === 0 ? (
+                  <div className="empty-state">
+                    <p>No tools available</p>
+                  </div>
+                ) : (
+                  <div className="tools-list">
+                    {tools.map((tool) => (
+                      <div key={tool.id} className="tool-item">
+                        <div className="tool-icon">🔧</div>
+                        <div className="tool-info">
+                          <div className="tool-name">{tool.name}</div>
+                          <div className="tool-desc">{tool.description}</div>
+                          {tool.usage && (
+                            <div className="tool-usage">💡 {tool.usage}</div>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
