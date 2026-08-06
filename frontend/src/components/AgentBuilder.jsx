@@ -210,8 +210,8 @@ function AgentBuilder({ onClose, onPipelineReady, savedAgents, editingAgent, ava
               <button className="btn-secondary" onClick={() => setShowTemplates(!showTemplates)}>
                 📋 Templates
               </button>
-              <button className="btn-add-agent-simple" onClick={handleAddAgent} title="Add Agent">
-                +
+              <button className="btn-save-agent" onClick={handleAddAgent} title="Save agent to pipeline">
+                💾 {editingIndex !== null ? 'Update' : 'Save'}
               </button>
               {editingIndex !== null && (
                 <button className="btn-cancel-edit" onClick={() => {

@@ -365,7 +365,11 @@ function ChatInterface() {
                   {msg.excelFile && (
                     <div className="excel-download">
                       <a 
-                        href={`http://localhost:8000/api/agents/download/${msg.excelFile.file_name}`}
+                        href={
+                          msg.excelFile.file_id
+                            ? `http://localhost:8000/api/agents/download/file/${msg.excelFile.file_id}`
+                            : `http://localhost:8000/api/agents/download/${msg.excelFile.file_name}`
+                        }
                         download={msg.excelFile.file_name}
                         className="download-btn"
                       >

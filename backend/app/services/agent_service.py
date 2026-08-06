@@ -9,6 +9,7 @@ from langgraph.graph import StateGraph, END
 from typing_extensions import TypedDict
 from app.models.agent import AgentConfig, AgentExecutionResult
 from .database import db_service
+from .file_service import file_service
 from app.tools.excel_generator import generate_excel_from_json
 from app.tools.json_utils import extract_json_from_text
 
@@ -167,7 +168,20 @@ class AgentExecutionService:
         
         # Get final output (from last agent)
         final_output = final_state["results"][-1]["output_text"] if final_state["results"] else user_input
+
+        # Any Excel files generated during the pipeline currently live on
+        # local disk (downloads/). Upload them into MongoDB GridFS so they
+        # persist independently of the local filesystem and remain
+        # downloadable from old chat sessions indefinitely.
+        await self._migrate_excel_files_to_gridfs(final_state["results"])
         excel_file = final_state.get("excel_file")
+        if excel_file:
+            # Re-fetch the (now GridFS-backed) reference for the result that
+            # produced it, since _migrate_excel_files_to_gridfs mutates results in place.
+            for result in final_state["results"]:
+                if result.get("excel_file") and result["excel_file"].get("file_name") == excel_file.get("file_name"):
+                    excel_file = result["excel_file"]
+                    break
         
         # Convert results to AgentExecutionResult objects
         results = [AgentExecutionResult(**result) for result in final_state["results"]]
@@ -182,6 +196,18 @@ class AgentExecutionService:
                 final_output=final_output,
                 total_execution_time=total_execution_time
             )
+
+            # Also persist this exchange into the regular chat history
+            # (the `chats` collection) so it shows up in the sidebar /
+            # "old chats" view just like a normal conversation turn.
+            await self._save_pipeline_chat_messages(
+                session_id=session_id,
+                user_input=user_input,
+                final_output=final_output,
+                agent_count=len(agents),
+                total_execution_time=total_execution_time,
+                excel_file=excel_file
+            )
         
         return {
             "session_id": session_id,
@@ -191,6 +217,62 @@ class AgentExecutionService:
             "timestamp": datetime.utcnow(),
             "excel_file": excel_file
         }
+
+    async def _migrate_excel_files_to_gridfs(self, results: List[Dict[str, Any]]):
+        """
+        Upload any locally-generated Excel files (from agent results) into
+        MongoDB GridFS, and rewrite each result's `excel_file` reference to
+        point at the GridFS file id instead of a local disk path. The local
+        temp file is removed afterward.
+        """
+        for result in results:
+            excel_file = result.get("excel_file")
+            if not excel_file or "file_path" not in excel_file:
+                continue
+
+            try:
+                gridfs_ref = await file_service.upload_file(
+                    file_path=excel_file["file_path"],
+                    filename=excel_file["file_name"]
+                )
+                result["excel_file"] = gridfs_ref
+
+                # Clean up the local temp file now that it's stored in GridFS
+                try:
+                    os.remove(excel_file["file_path"])
+                except OSError:
+                    pass
+            except Exception:
+                # If GridFS upload fails, leave the local file reference in
+                # place so the user can still download it this session.
+                continue
+
+    async def _save_pipeline_chat_messages(
+        self,
+        session_id: str,
+        user_input: str,
+        final_output: str,
+        agent_count: int,
+        total_execution_time: float,
+        excel_file: Dict[str, Any] = None
+    ):
+        """Persist the agent pipeline's user input and final output into the
+        `chats` collection, so agent pipeline exchanges appear in chat
+        history/sidebar exactly like normal chat messages."""
+        from .chat_service import chat_service
+
+        await chat_service.save_message(session_id, "user", user_input)
+        await chat_service.save_message(
+            session_id,
+            "assistant",
+            final_output,
+            extra_fields={
+                "isAgentResult": True,
+                "agentCount": agent_count,
+                "executionTime": total_execution_time,
+                "excelFile": excel_file
+            }
+        )
     
     async def _save_execution_history(
         self,

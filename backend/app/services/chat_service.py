@@ -110,8 +110,9 @@ class ChatService:
             return chat_doc["messages"]
         return []
     
-    async def _save_message(self, session_id: str, role: str, content: str):
-        """Save a message to MongoDB"""
+    async def _save_message(self, session_id: str, role: str, content: str, extra_fields: Dict[str, Any] = None):
+        """Save a message to MongoDB. `extra_fields` allows storing additional
+        metadata on the message (e.g. agent pipeline info, GridFS file references)."""
         db = db_service.get_database()
         chat_collection = db.chats
         
@@ -120,6 +121,8 @@ class ChatService:
             "content": content,
             "timestamp": datetime.utcnow()
         }
+        if extra_fields:
+            message.update({k: v for k, v in extra_fields.items() if v is not None})
         
         # Update or create chat document
         await chat_collection.update_one(
@@ -131,6 +134,11 @@ class ChatService:
             },
             upsert=True
         )
+
+    async def save_message(self, session_id: str, role: str, content: str, extra_fields: Dict[str, Any] = None):
+        """Public wrapper to persist any message (used by other services,
+        e.g. saving agent pipeline exchanges to chat history)."""
+        await self._save_message(session_id, role, content, extra_fields)
     
     async def get_all_sessions(self) -> List[Dict[str, Any]]:
         """Get all chat sessions with metadata"""

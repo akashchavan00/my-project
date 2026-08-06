@@ -591,34 +591,34 @@
   font-size: 0.875rem;
 }
 
-/* ==================== SIMPLE + BUTTON ==================== */
-.btn-add-agent-simple {
+/* ==================== SAVE (ADD TO PIPELINE) BUTTON ==================== */
+.btn-save-agent {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
+  gap: 0.4rem;
+  padding: 0.75rem 1.25rem;
   background: var(--accent);
   color: white;
   border: none;
   border-radius: 8px;
-  font-size: 1.75rem;
-  font-weight: 300;
+  font-size: 0.875rem;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   line-height: 1;
 }
 
-.btn-add-agent-simple:hover {
-  transform: translateY(-2px) scale(1.05);
+.btn-save-agent:hover {
+  transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(58, 58, 58, 0.25);
 }
 
-[data-theme="dark"] .btn-add-agent-simple {
+[data-theme="dark"] .btn-save-agent {
   background: var(--accent);
 }
 
-[data-theme="dark"] .btn-add-agent-simple:hover {
+[data-theme="dark"] .btn-save-agent:hover {
   box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
 }
 
