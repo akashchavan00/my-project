@@ -1,0 +1,623 @@
+/* ==================== AGENT BUILDER OVERLAY ==================== */
+.agent-builder-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
+}
+
+.agent-builder {
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  width: 90%;
+  max-width: 1200px;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================== HEADER ==================== */
+.agent-builder-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  border-bottom: 2px solid var(--border);
+  background: var(--bg-header);
+  border-radius: 16px 16px 0 0;
+}
+
+.agent-builder-header h2 {
+  margin: 0;
+  color: white;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.close-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.close-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: rotate(90deg);
+}
+
+/* ==================== CONTENT ==================== */
+.agent-builder-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  padding: 2rem;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.agent-builder-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.agent-builder-content::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+.agent-builder-content::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+/* ==================== AGENT FORM ==================== */
+.agent-form h3,
+.agents-pipeline h3 {
+  margin: 0 0 1.5rem 0;
+  color: var(--text-primary);
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(193, 103, 59, 0.1);
+}
+
+.form-group textarea {
+  resize: vertical;
+  font-family: inherit;
+}
+
+.help-text {
+  display: block;
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* ==================== FORM ACTIONS ==================== */
+.form-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-cancel,
+.btn-execute {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  flex: 1;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(193, 103, 59, 0.3);
+}
+
+.btn-secondary {
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border: 2px solid var(--border);
+}
+
+.btn-secondary:hover {
+  background: var(--accent-secondary);
+  color: white;
+  border-color: var(--accent-secondary);
+}
+
+.btn-cancel {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 2px solid var(--border);
+}
+
+.btn-cancel:hover {
+  background: var(--bg-primary);
+}
+
+/* ==================== TEMPLATES ==================== */
+.templates-list {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--bg-primary);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.templates-list h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.template-item {
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.template-item:hover {
+  border-color: var(--accent);
+  transform: translateX(4px);
+}
+
+.template-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.template-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* ==================== PIPELINE ==================== */
+.agents-pipeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.empty-pipeline {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--text-secondary);
+}
+
+.empty-pipeline p:first-child {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.pipeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.pipeline-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--bg-primary);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+}
+
+.pipeline-item:hover {
+  border-color: var(--accent);
+  box-shadow: 0 2px 8px var(--shadow);
+}
+
+.pipeline-order {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  min-width: 2.5rem;
+  text-align: center;
+}
+
+.pipeline-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.pipeline-name {
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.pipeline-desc {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.pipeline-prompt {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-style: italic;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pipeline-actions {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+}
+
+.btn-move,
+.btn-edit,
+.btn-delete {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-move:hover {
+  background: var(--accent-secondary);
+  color: white;
+  border-color: var(--accent-secondary);
+}
+
+.btn-edit:hover {
+  background: #3b82f6;
+  color: white;
+  border-color: #3b82f6;
+}
+
+.btn-delete:hover {
+  background: #ef4444;
+  color: white;
+  border-color: #ef4444;
+}
+
+.btn-move:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.btn-move:disabled:hover {
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+
+/* ==================== FOOTER ==================== */
+.agent-builder-footer {
+  padding: 1.5rem 2rem;
+  border-top: 2px solid var(--border);
+  background: var(--bg-primary);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 0 0 16px 16px;
+}
+
+.footer-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.info-icon {
+  font-size: 1.2rem;
+}
+
+.footer-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-execute {
+  background: var(--accent);
+  color: white;
+}
+
+.btn-execute:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(193, 103, 59, 0.4);
+}
+
+.btn-execute:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ==================== RESPONSIVE ==================== */
+@media (max-width: 1024px) {
+  .agent-builder-content {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .agent-builder {
+    width: 95%;
+    max-height: 95vh;
+  }
+
+  .agent-builder-header,
+  .agent-builder-footer {
+    padding: 1rem;
+  }
+
+  .agent-builder-content {
+    padding: 1rem;
+    gap: 1.5rem;
+  }
+
+  .footer-info {
+    display: none;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn-primary {
+    width: 100%;
+  }
+}
+
+/* ==================== ADD AGENT BUTTON (+ Icon) ==================== */
+.btn-add-agent {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex: 1;
+}
+
+.add-icon {
+  font-size: 1.125rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.add-text {
+  font-size: 0.875rem;
+}
+
+.btn-add-agent:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(58, 58, 58, 0.25);
+}
+
+[data-theme="dark"] .btn-add-agent {
+  background: var(--accent);
+}
+
+[data-theme="dark"] .btn-add-agent:hover {
+  box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
+}
+
+.btn-cancel-edit {
+  padding: 0.75rem 1.25rem;
+  background: transparent;
+  color: var(--text-secondary);
+  border: 2px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-cancel-edit:hover {
+  background: var(--bg-primary);
+  border-color: var(--accent);
+}
+
+/* ==================== DONE BUTTON ==================== */
+.btn-done {
+  padding: 0.75rem 1.5rem;
+  background: var(--accent-secondary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-done:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(92, 122, 99, 0.4);
+}
+
+.btn-done:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+[data-theme="dark"] .btn-done {
+  background: var(--accent);
+}
+
+[data-theme="dark"] .btn-done:hover:not(:disabled) {
+  box-shadow: 0 6px 20px rgba(255, 140, 66, 0.4);
+}
+
+/* ==================== SMALLER FONTS FOR PROFESSIONAL LOOK ==================== */
+.agent-builder-header h2 {
+  font-size: 1.25rem;
+}
+
+.agent-form h3,
+.agents-pipeline h3 {
+  font-size: 1.125rem;
+}
+
+.form-group label {
+  font-size: 0.8125rem;
+}
+
+.form-group input,
+.form-group textarea {
+  font-size: 0.875rem;
+}
+
+.help-text {
+  font-size: 0.75rem;
+}
+
+.pipeline-name {
+  font-size: 0.9375rem;
+}
+
+.pipeline-desc {
+  font-size: 0.8125rem;
+}
+
+.pipeline-prompt {
+  font-size: 0.75rem;
+}
+
+.footer-info {
+  font-size: 0.8125rem;
+}
+
+.btn-secondary,
+.btn-cancel {
+  font-size: 0.875rem;
+}
+
+/* ==================== SIMPLE + BUTTON ==================== */
+.btn-add-agent-simple {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: var(--accent);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.75rem;
+  font-weight: 300;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  line-height: 1;
+}
+
+.btn-add-agent-simple:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 4px 12px rgba(58, 58, 58, 0.25);
+}
+
+[data-theme="dark"] .btn-add-agent-simple {
+  background: var(--accent);
+}
+
+[data-theme="dark"] .btn-add-agent-simple:hover {
+  box-shadow: 0 4px 12px rgba(255, 140, 66, 0.3);
+}

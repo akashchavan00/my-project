@@ -1,0 +1,10 @@
+fastapi
+uvicorn[standard]
+python-dotenv
+pydantic
+motor
+pymongo
+langchain
+langchain-groq
+langgraph
+typing-extensions
